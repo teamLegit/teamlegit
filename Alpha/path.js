@@ -1,20 +1,34 @@
-
 var storeImageLocation = new Array();
 var inMenu = true;
+
+//var roadWidth = 20;
+//var imgSize = 80;
+//var tileSize = 100;
 
 //IUEE
 var theCanvas = document.getElementById("myCanvas");
 var ctx = theCanvas.getContext("2d");
 var endGame = false;
-document.addEventListener("keydown", move);
+var houses = new Array();
+for(i = 1; i < 4; i++){
+	houses[i-1] = new Image();
+	houses[i-1].src = "house" + i + ".png";
+}
+console.log(houses);
+
+function setUp(roadWidth, imgSize, tileSize){
+console.log(roadWidth + ", " + imgSize + ", " + tileSize);
+theMenu.style.zIndex=0;
+theCanvas.style.zIndex=1;
 
 /*
 	Grid
 */
 ctx.fillStyle = "black";
-for(i = theCanvas.width+5; i >= 0; i-=50){
-	for(j = theCanvas.height+5; j >= 0; j-=50){
-		ctx.fillRect (i, j, 40, 40);
+for(i = theCanvas.width+(roadWidth/2); i >= 0; i-=tileSize){
+	for(j = theCanvas.height+(roadWidth/2); j >= 0; j-=tileSize){
+		var a = Math.floor(Math.random()*3);
+		ctx.drawImage(houses[a],i,j, imgSize, imgSize);
 		}
 }
 fillCornersRandomly();
@@ -28,79 +42,35 @@ var tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
 /*
 	Mouse Click
 */
-var x1 = 50;
+var x1 = tileSize;
 var x2;
-var y1 = 50;
+var y1 = tileSize;
 var y2;
-//var endX = 750;
-//var endY = 500;
 var endX;
 var endY;
 
 ctx.fillStyle = "green";
-ctx.fillRect(x1-5, y1-5, Math.abs(10), Math.abs(10));
+ctx.fillRect(x1-(roadWidth/2), y1-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 
 
 makeRandomEnd(); // I ADDED ////////////////////////////////////////////////////
 // As the points increase, the blue dots increase. Added functionality: Cannot go through blue dots.
 function bounceEnd()
 {
-	if(elapsed%2 == 0)
+	if(elapsed%3 == 0)
 	{
 		makeRandomEnd();
 	}
 }
 
-
-//ctx.fillStyle = "blue";
-//ctx.fillRect(endX-5, endY-5, Math.abs(10), Math.abs(10));
-//tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
-
 function makeRandomEnd() // I ADDED ///////////////////////////////////////
 {
-	//var colunms = 13;
-	//var rows = 17;
-	
-	endX = (Math.floor(Math.random()*17)*50);//-5;//((Math.floor(Math.random()*13)+1)*50)-5;
-	endY = (Math.floor(Math.random()*13)*50);//-5;//((Math.floor(Math.random()*17)+1)*50)-5;
-	//if((endX>=600) && (endX<=800) &&(endY>=300) && (endY<=600))
-	//{
-		ctx.fillStyle = "blue";
-		ctx.fillRect(endX-5, endY-5, Math.abs(10), Math.abs(10));
-		tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
-	//}
+	endX = (Math.floor(Math.random()*(800/tileSize))*tileSize);
+	endY = (Math.floor(Math.random()*(600/tileSize))*tileSize);
+	ctx.fillStyle = "blue";
+	ctx.fillRect(endX-(roadWidth/2), endY-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
+	tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
 }
-
-
- function move(e){
-		console.log(e);
-		
-		switch(e.keyCode){
-		case 37: //left arrow
-			x1 -=50;
-			break;
-		case 38: //up arrow
-			y1 -= 50;
-			break;
-		case 39: //right arrow
-			x1 +=50;
-			break;
-		case 40: // down arrow
-			y1 +=50;
-			break;
-		
-		}
-		ctx.fillStyle = "green";
-		ctx.fillRect(x1-5, y1-5, Math.abs(10), Math.abs(10));
-		drawPath(x1,y1);
-	   
-	}
-
-
-
-
-
-/*	OLD  WAY OF MOVING WITH MOUSE
 
 theCanvas.onmousedown = function (e) {
 	if(endGame == false){	
@@ -113,18 +83,18 @@ theCanvas.onmousedown = function (e) {
 	var setY = mouseY;
 	
 	//X Coordinate
-	if(Math.abs(mouseX%50-50) <= 25)
-		setX = Math.abs(mouseX%50 - 50) + mouseX;
+	if(Math.abs(mouseX%tileSize-tileSize) <= tileSize/2)
+		setX = Math.abs(mouseX%tileSize - tileSize) + mouseX;
 	
-	if(Math.abs(mouseX%50) < 25)
-		setX = Math.abs(mouseX%50 - mouseX);
+	if(Math.abs(mouseX%tileSize) < tileSize/2)
+		setX = Math.abs(mouseX%tileSize - mouseX);
 		
 	//Y Coordinate
-	if(Math.abs(mouseY%50-50) <= 25)
-		setY = Math.abs(mouseY%50 - 50) + mouseY;
+	if(Math.abs(mouseY%tileSize-tileSize) <= tileSize/2)
+		setY = Math.abs(mouseY%tileSize - tileSize) + mouseY;
 		
-	if(Math.abs(mouseY%50) < 25)
-		setY = Math.abs(mouseY%50 - mouseY);
+	if(Math.abs(mouseY%tileSize) < tileSize/2)
+		setY = Math.abs(mouseY%tileSize - mouseY);
 		
 	
 	console.log("Click!\nX: " + mouseX + "\nY: " + mouseY);
@@ -134,19 +104,10 @@ theCanvas.onmousedown = function (e) {
 	x2 = setX;
 	y2 = setY;
 	ctx.fillStyle = "green";
-	ctx.fillRect(x2-5, y2-5, Math.abs(10), Math.abs(10));
+	ctx.fillRect(x2-(roadWidth/2), y2-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 	drawPath(x2,y2);
 	}
 }
-
-
-
-
-
-*/
-
-
-
 
 /*
 	Draw Selected Path
@@ -156,9 +117,9 @@ function drawPath(x2,y2){
 	ctx.fillStyle = "red";
 		if(x1 == x2){
 			if(y1<y2)
-				ctx.fillRect(x1-5, y1, Math.abs(10), Math.abs(y2-y1));
+				ctx.fillRect(x1-(roadWidth/2), y1, Math.abs(roadWidth), Math.abs(y2-y1));
 			else
-				ctx.fillRect(x1-5, y2, Math.abs(10), Math.abs(y2-y1));
+				ctx.fillRect(x1-(roadWidth/2), y2, Math.abs(roadWidth), Math.abs(y2-y1));
 			updateScore();
 			tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
 			distance += Math.abs(y2-y1);
@@ -166,9 +127,9 @@ function drawPath(x2,y2){
 			y1 = y2;
 		}else if(y1 == y2){
 			if(x1<x2)
-				ctx.fillRect(x1, y1-5, Math.abs(x2-x1), Math.abs(10));
+				ctx.fillRect(x1, y1-(roadWidth/2), Math.abs(x2-x1), Math.abs(roadWidth));
 			else
-				ctx.fillRect(x2, y2-5, Math.abs(x2-x1), Math.abs(10));
+				ctx.fillRect(x2, y2-(roadWidth/2), Math.abs(x2-x1), Math.abs(roadWidth));
 			updateScore();
 			tmp = ctx.getImageData(0,0,theCanvas.width,theCanvas.height);
 			distance += Math.abs(x2-x1);
@@ -187,22 +148,13 @@ function drawPath(x2,y2){
 		if((x1 == x2 || y1 == y2) && (x1 == endX && y1 == endY)){
 			updateScore();
 			endGame = true;
+			
 			console.log("Win ");
 			ctx.fillStyle = "white";
 			ctx.font = "32px Arial";
-			//ctx.fillText("End message goes here", theCanvas.width/3, theCanvas.height/2);
-			
-			ctx.fillText("Win! Score:" + score, theCanvas.width/3, theCanvas.height/2);
-			alert(" CONGRATULATIONS!!,\n Score: " + score + " points in " + elapsed + " seconds" + "\n CLICK SPACE BAR TO GO TO MENU");
 			inMenu = true;
-			
-			/*window.setTimeout(function(){
-				ctx.clearRect(0,0,theCanvas.width,theCanvas.height);
-				inMenu = true;
-				menuPop();
-				theMenu.style.zIndex++;
-				theCanvas.style.zIndex--;
-			},5000);*/
+			once = false;
+			alert(" CONGRATULATIONS!!,\n Score: " + score + " points in " + elapsed + " seconds." + "\n PRESS SPACE TO GO TO MENU.");
 			
 			
 			
@@ -211,29 +163,27 @@ function drawPath(x2,y2){
 
 function fillCornersRandomly()
 {
-	//var i=0;
-	//var j=0;
-	var colunms = 13;
-	var rows = 17;
-	// Creating the 2D array
+	var columns = 800/tileSize + 1;
+	var rows = 600/tileSize + 1;
 
-	for(i = 0; i < rows; i++){
+	// Creating the 2D array
+	for(i = 0; i < columns; i++){
 		storeImageLocation[i] = new Array();
-		for(j = 0; j < colunms; j++){
+		for(j = 0; j < rows; j++){
 		storeImageLocation[i][j] = 0;
 	}
 
 }
 	console.log(storeImageLocation);
-	for(i = 0; i< rows; i++)
+	for(i = 0; i < columns; i++)
 	{
-		for(var j=0; j< colunms; j++)
+		for(var j=0; j< rows; j++)
 		{
 			if((Math.floor(Math.random()*2)+1) == (Math.floor(Math.random()*2)+1)) // some random sequence
 			{
 				//print the image
 				ctx.fillStyle = "White";
-				ctx.fillRect((i*50)-5, (j*50)-5, Math.abs(10), Math.abs(10));
+				ctx.fillRect((i*tileSize)-(roadWidth/2), (j*tileSize)-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 				storeImageLocation[i][j] = 1; // image pop up
 				
 			}
@@ -244,9 +194,9 @@ function fillCornersRandomly()
 function updateScore(){
 	var pointsReached = 0;
 	if(x1 != x2){
-		pointsReached = Math.abs(x2-x1)/50;
+		pointsReached = Math.abs(x2-x1)/tileSize;
 	}else if(y1 != y2){
-		pointsReached = Math.abs(y2-y1)/50;
+		pointsReached = Math.abs(y2-y1)/tileSize;
 	}else{
 		console.log("Watcha doing here?");
 	}
@@ -254,41 +204,41 @@ function updateScore(){
 	for(i = 0; i < pointsReached; i++){
 		if(x1 != x2){
 			if(x1 < x2){
-				if(storeImageLocation[(x1+50+(i*50))/50][y2/50] == 1){
+				if(storeImageLocation[(x1+tileSize+(i*tileSize))/tileSize][y2/tileSize] == 1){
 					score++;
 					ctx.fillStyle = "White";
-					ctx.fillRect((x1+50+(i*50))-5, y2-5, Math.abs(10), Math.abs(10));
+					ctx.fillRect((x1+tileSize+(i*tileSize))-(roadWidth/2), y2-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 					
-					storeImageLocation[(x1+50+(i*50))/50][y2/50] = 0;
+					storeImageLocation[(x1+tileSize+(i*tileSize))/tileSize][y2/tileSize] = 0;
 					
 				}
 			}else{
-				if(storeImageLocation[(x2+50+(i*50))/50][y2/50] == 1){
+				if(storeImageLocation[(x1-tileSize-(i*tileSize))/tileSize][y2/tileSize] == 1){
 					score++;
 					ctx.fillStyle = "White";
-					ctx.fillRect((x2+50+(i*50))-5, y2-5, Math.abs(10), Math.abs(10));
+					ctx.fillRect((x1-tileSize-(i*tileSize))-(roadWidth/2), y2-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 					
-					storeImageLocation[(x2+50+(i*50))/50][y2/50] == 0;
+					storeImageLocation[(x1-tileSize-(i*tileSize))/tileSize][y2/tileSize] = 0;
 					
 				}
 			}
 		}else if(y1 != y2){
 			if(y1 < y2){	
-				if(storeImageLocation[x2/50][(y1+50+(i*50))/50] == 1){
+				if(storeImageLocation[x2/tileSize][(y1+tileSize+(i*tileSize))/tileSize] == 1){
 					score++;
 					ctx.fillStyle = "White";
-					ctx.fillRect(x2-5, (y1+50+(i*50))-5, Math.abs(10), Math.abs(10));
+					ctx.fillRect(x2-(roadWidth/2), (y1+tileSize+(i*tileSize))-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 					
-					storeImageLocation[x2/50][(y1+50+(i*50))/50] == 0;
+					storeImageLocation[x2/tileSize][(y1+tileSize+(i*tileSize))/tileSize] = 0;
 					
 				}
 			}else{
-				if(storeImageLocation[x2/50][(y2+50+(i*50))/50] == 1){
+				if(storeImageLocation[x2/tileSize][(y1-tileSize-(i*tileSize))/tileSize] == 1){
 					score++;
 					ctx.fillStyle = "White";
-					ctx.fillRect(x2-5, (y2+50+(i*50))-5, Math.abs(10), Math.abs(10));
+					ctx.fillRect(x2-(roadWidth/2), (y1-tileSize-(i*tileSize))-(roadWidth/2), Math.abs(roadWidth), Math.abs(roadWidth));
 					
-					storeImageLocation[x2/50][(y2+50+(i*50))/50] == 0;
+					storeImageLocation[x2/tileSize][(y1-tileSize-(i*tileSize))/tileSize] = 0;
 					
 				}
 			}	
@@ -298,6 +248,15 @@ function updateScore(){
 	}
 	bounceEnd(); // I ADDED
 }
+}
 
+window.onkeyup = function(e) {
+	if(e.keyCode == 32 && endGame){
+		ctx.clearRect(0,0,theCanvas.width,theCanvas.height);
+		menuPop();
+		theMenu.style.zIndex=1;
+		theCanvas.style.zIndex=0;
+	}
+}
 
 
